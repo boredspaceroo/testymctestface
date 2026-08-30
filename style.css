@@ -1,0 +1,326 @@
+/* ---------------------------------------------------------------------
+   Starcloud-1 Live Tracker — design tokens
+   bg:      #05070d   deep space
+   surface: #0b1120cc  panel glass
+   line:    #1c2740   hairline
+   cyan:    #5aebdd   compute / primary accent
+   amber:   #ffb157   solar / secondary accent
+   violet:  #8c7bff   AI / tertiary accent
+   text:    #eaf0fa   primary text
+   muted:   #8592ad   secondary text
+   ------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root{
+  --bg: #05070d;
+  --surface: rgba(9, 13, 24, 0.74);
+  --surface-solid: #0c1220;
+  --line: rgba(140, 165, 210, 0.16);
+  --cyan: #5aebdd;
+  --amber: #ffb157;
+  --violet: #9a8bff;
+  --text: #eaf0fa;
+  --muted: #8a96b3;
+  --radius: 10px;
+  font-size: 16px;
+}
+
+html, body{
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button{ font-family: inherit; }
+::selection{ background: var(--cyan); color: #041014; }
+:focus-visible{ outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+.mono{ font-family: 'JetBrains Mono', monospace; }
+
+/* ---------- scene ---------- */
+#scene{ position: fixed; inset: 0; display: block; outline: none; }
+#vignette{
+  position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 52%, rgba(2,3,7,0.6) 100%);
+}
+
+/* ---------- intro flash burst ---------- */
+#flash{
+  position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, #ffffff 0%, rgba(90,235,221,0.6) 35%, rgba(5,7,13,0) 70%);
+  opacity: 0;
+}
+#flash.burst{ animation: flashBurst 900ms ease-out forwards; }
+@keyframes flashBurst{
+  0%{ opacity: 0; }
+  12%{ opacity: 1; }
+  100%{ opacity: 0; }
+}
+
+/* ---------- intro overlay ---------- */
+#intro{
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, #0a1120 0%, #05070d 65%, #030408 100%);
+  transition: opacity 1.1s ease, visibility 1.1s ease;
+}
+#intro.hidden{ opacity: 0; visibility: hidden; pointer-events: none; }
+
+.intro-inner{ text-align: center; padding: 0 24px; max-width: 640px; }
+
+.kicker{
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.32em;
+  font-size: 0.72rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  opacity: 0.9;
+  margin-bottom: 18px;
+  animation: fadeUp 900ms ease both;
+}
+
+.intro-title{
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #b9c8e8 60%, #7686a8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fadeUp 1000ms 120ms ease both;
+}
+
+.intro-sub{
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  animation: fadeUp 1000ms 240ms ease both;
+}
+.intro-sub b{ color: var(--text); font-weight: 500; }
+
+@keyframes fadeUp{
+  from{ opacity: 0; transform: translateY(16px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.enter-btn{
+  margin-top: 40px;
+  padding: 15px 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(90,235,221,0.5);
+  background: linear-gradient(180deg, rgba(90,235,221,0.14), rgba(90,235,221,0.03));
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  animation: fadeUp 1000ms 380ms ease both, pulseGlow 2.6s ease-in-out infinite;
+  transition: transform 220ms ease, background 220ms ease;
+}
+.enter-btn:hover{ transform: translateY(-2px); background: rgba(90,235,221,0.18); }
+.enter-btn:active{ transform: translateY(0); }
+@keyframes pulseGlow{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(90,235,221,0.25); }
+  50%{ box-shadow: 0 0 30px 4px rgba(90,235,221,0.16); }
+}
+
+.intro-foot{
+  margin-top: 14px;
+  font-size: 0.72rem;
+  color: #55617e;
+  animation: fadeUp 1000ms 460ms ease both;
+}
+
+/* ---------- HUD shared ---------- */
+#hud{ position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+#hud.hidden{ display: none; }
+#hud > *{ pointer-events: auto; }
+
+.panel{
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- top bar ---------- */
+.hud-top{
+  position: absolute; top: 20px; left: 20px; right: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+.hud-top.show{ opacity: 1; transform: translateY(0); }
+
+.brand{ display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+.brand-dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); flex: none; }
+.brand-dot.live{ animation: livePulse 1.6s ease-in-out infinite; }
+@keyframes livePulse{ 0%,100%{ opacity: 1; } 50%{ opacity: 0.35; } }
+.brand-text{ font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.02em; }
+.brand-sub{ font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--muted); letter-spacing: 0.08em; margin-top: 1px; }
+
+.hud-actions{ display: flex; gap: 8px; }
+.icon-btn{
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--line);
+  color: var(--text); cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease;
+  backdrop-filter: blur(14px);
+}
+.icon-btn:hover{ border-color: rgba(90,235,221,0.5); background: rgba(90,235,221,0.08); }
+.icon-btn.active{ border-color: var(--cyan); color: var(--cyan); }
+.icon-btn svg{ width: 18px; height: 18px; }
+
+/* ---------- bottom telemetry strip ---------- */
+.hud-bottom{
+  position: absolute; bottom: 20px; left: 20px; right: 20px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+.hud-bottom.show{ opacity: 1; transform: translateY(0); }
+
+.telemetry{
+  display: flex; align-items: stretch;
+  padding: 6px;
+  gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.stat{
+  padding: 10px 20px;
+  min-width: 108px;
+  text-align: left;
+}
+.stat + .stat{ border-left: 1px solid var(--line); }
+.stat-label{ font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+.stat-value{ font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; margin-top: 3px; color: var(--text); white-space: nowrap; }
+.stat-value .unit{ font-size: 0.7rem; color: var(--muted); margin-left: 3px; }
+.stat-value.accent{ color: var(--cyan); }
+
+/* ---------- speed control ---------- */
+.speed-ctrl{
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px 8px 16px;
+  border-left: 1px solid var(--line);
+}
+.speed-label{ font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; }
+.speed-opts{ display: flex; gap: 4px; }
+.speed-opt{
+  padding: 6px 10px; border-radius: 6px; border: 1px solid transparent;
+  background: transparent; color: var(--muted); cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  transition: all 150ms ease;
+}
+.speed-opt:hover{ color: var(--text); }
+.speed-opt.active{ background: rgba(90,235,221,0.12); border-color: rgba(90,235,221,0.4); color: var(--cyan); }
+
+/* ---------- orbit progress ring (bottom-right, own corner) ---------- */
+.orbit-ring-wrap{
+  position: absolute; bottom: 20px; right: 20px;
+  width: 118px; height: 118px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0.9);
+  transition: opacity 700ms ease 120ms, transform 700ms ease 120ms;
+}
+.orbit-ring-wrap.show{ opacity: 1; transform: scale(1); }
+.orbit-ring-wrap svg{ width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg{ fill: none; stroke: rgba(140,165,210,0.14); stroke-width: 3; }
+.ring-fg{ fill: none; stroke: var(--cyan); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(90,235,221,0.7)); }
+.ring-center{ position: absolute; text-align: center; }
+.ring-center .rl{ font-family: 'JetBrains Mono', monospace; font-size: 0.56rem; color: var(--muted); letter-spacing: 0.08em; }
+.ring-center .rv{ font-family: 'JetBrains Mono', monospace; font-size: 0.92rem; color: var(--text); margin-top: 2px; }
+
+/* on small screens the ring would collide with the telemetry strip */
+@media (max-width: 760px){ .orbit-ring-wrap{ display: none; } }
+
+/* ---------- mission drawer ---------- */
+#drawer{
+  position: absolute; top: 0; right: 0; height: 100%;
+  width: min(420px, 100vw);
+  padding: 90px 28px 28px;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(7,10,20,0.92), rgba(6,9,17,0.96));
+  border-left: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+  transform: translateX(100%);
+  transition: transform 480ms cubic-bezier(.2,.8,.2,1);
+}
+#drawer.open{ transform: translateX(0); }
+
+.drawer-title{ font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; }
+.drawer-tag{ font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--cyan); letter-spacing: 0.1em; margin-top: 4px; }
+.drawer-lede{ color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-top: 14px; }
+
+.section{ margin-top: 30px; }
+.section-h{ font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.14em; color: var(--amber); text-transform: uppercase; margin-bottom: 12px; }
+
+.kv{ display: grid; grid-template-columns: 1fr 1.3fr; gap: 9px 12px; font-size: 0.86rem; }
+.kv dt{ color: var(--muted); }
+.kv dd{ color: var(--text); }
+
+.milestone{ display: flex; gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); }
+.milestone:first-child{ border-top: none; }
+.milestone-date{ font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--cyan); white-space: nowrap; padding-top: 1px; min-width: 76px; }
+.milestone-text{ font-size: 0.85rem; color: #cfd7ea; line-height: 1.55; }
+
+.prose{ font-size: 0.86rem; line-height: 1.65; color: #cfd7ea; }
+
+.drawer-close{
+  position: absolute; top: 24px; right: 24px;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--line); background: transparent; color: var(--text);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+.src-note{ margin-top: 30px; font-size: 0.7rem; color: #556; line-height: 1.6; }
+.src-note a{ color: var(--muted); }
+
+/* ---------- toast (fallback / live status) ---------- */
+#toast{
+  position: absolute; top: 90px; left: 20px;
+  max-width: 320px; padding: 12px 16px;
+  font-size: 0.78rem; color: var(--muted); line-height: 1.5;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+#toast.show{ opacity: 1; transform: translateY(0); }
+
+/* ---------- follow badge ---------- */
+.follow-badge{
+  position: absolute; top: 90px; left: 50%; transform: translateX(-50%) translateY(-6px);
+  padding: 9px 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  letter-spacing: 0.08em; color: var(--amber);
+  background: var(--surface); border: 1px solid rgba(255,177,87,0.35); border-radius: 999px;
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.follow-badge.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 640px){
+  .brand-text{ font-size: 0.82rem; }
+  .stat{ min-width: 84px; padding: 9px 12px; }
+  .stat-value{ font-size: 0.9rem; }
+  .speed-ctrl{ padding-left: 10px; }
+  .speed-opt{ padding: 6px 8px; font-size: 0.66rem; }
+  #drawer{ width: 100vw; padding-top: 78px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
