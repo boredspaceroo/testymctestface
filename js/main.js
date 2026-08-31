@@ -536,9 +536,12 @@
   // ---------------------------------------------------------------------
   const clock = new THREE.Clock();
   let frame = 0;
+  let crashed = false;
 
   function animate() {
     requestAnimationFrame(animate);
+    if (crashed) return;
+    try {
     const dt = Math.min(clock.getDelta(), 0.1);
     simMillis += dt * 1000 * speedMultiplier;
     frame++;
@@ -581,6 +584,11 @@
     if (frame % 6 === 0) updateTelemetry(state);
 
     renderer.render(scene, camera);
+  } catch (err) {
+      crashed = true;
+      showToast('RENDER ERROR: ' + err.message, 999999);
+      document.getElementById('hud').classList.remove('hidden');
+    }
   }
   animate();
 })();
