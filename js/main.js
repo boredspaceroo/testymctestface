@@ -561,7 +561,7 @@
     groundMarker.position.copy(sub);
     groundMarker.lookAt(0, 0, 0);
     groundLine.geometry.setFromPoints([sub, satPos]);
-    groundLine.geometry.computeLineDistances();
+    groundLine.computeLineDistances();
 
     earthMesh.rotation.y = ORBIT.gmstRad(simMillis);
     cloudMesh.rotation.y += dt * 0.006;
