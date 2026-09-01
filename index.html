@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Starcloud-1 — Live Orbital Tracker</title>
+<meta name="description" content="A real-time 3D tracker for Starcloud-1, the first orbital AI data center, built around its live orbital elements.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="scene"></div>
+<div id="vignette"></div>
+
+<div id="flash"></div>
+
+<!-- ===================== INTRO ===================== -->
+<div id="intro">
+  <div class="intro-inner">
+    <div class="kicker">STARCLOUD &nbsp;//&nbsp; ORBITAL COMPUTE</div>
+    <div class="intro-title">STARCLOUD&#8209;1</div>
+    <div class="intro-sub">
+      The first data-center-class GPU in orbit, live-tracked from its own
+      orbital elements. <b>~500&nbsp;km</b> up, an NVIDIA H100 is running —
+      circling Earth once every <b>~95 minutes</b> at roughly <b>7.6&nbsp;km/s</b>.
+    </div>
+    <button class="enter-btn" id="enterBtn">ENTER ORBIT</button>
+    <div class="intro-foot">Best viewed with sound on · drag to look around · scroll to zoom</div>
+  </div>
+</div>
+
+<!-- ===================== HUD ===================== -->
+<div id="hud" class="hidden">
+
+  <div class="hud-top" id="hudTop">
+    <div class="panel brand">
+      <div class="brand-dot live" id="liveDot"></div>
+      <div>
+        <div class="brand-text">STARCLOUD&#8209;1</div>
+        <div class="brand-sub" id="brandSub">NORAD 66303 &nbsp;·&nbsp; LEO TRACKER</div>
+      </div>
+    </div>
+    <div class="hud-actions">
+      <button class="icon-btn" id="audioBtn" title="Toggle ambient audio" aria-label="Toggle ambient audio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="wave1" d="M16.5 8.5a5 5 0 0 1 0 7"/><path id="wave2" d="M19 6a9 9 0 0 1 0 12"/></svg>
+      </button>
+      <button class="icon-btn" id="followBtn" title="Follow satellite" aria-label="Follow satellite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+      </button>
+      <button class="icon-btn" id="infoBtn" title="Mission data" aria-label="Open mission data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="follow-badge" id="followBadge">FOLLOW MODE — CAMERA LOCKED TO STARCLOUD-1</div>
+
+  <div class="panel" id="toast"></div>
+
+  <div class="orbit-ring-wrap" id="ringWrap">
+    <svg viewBox="0 0 100 100">
+      <circle class="ring-bg" cx="50" cy="50" r="44"></circle>
+      <circle class="ring-fg" id="ringFg" cx="50" cy="50" r="44" stroke-dasharray="276.5" stroke-dashoffset="276.5"></circle>
+    </svg>
+    <div class="ring-center">
+      <div class="rl">ORBIT</div>
+      <div class="rv" id="ringLabel">—</div>
+    </div>
+  </div>
+
+  <div class="hud-bottom" id="hudBottom">
+    <div class="panel telemetry">
+      <div class="stat">
+        <div class="stat-label">Altitude</div>
+        <div class="stat-value accent" id="statAlt">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Speed</div>
+        <div class="stat-value" id="statSpeed">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Latitude</div>
+        <div class="stat-value" id="statLat">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Longitude</div>
+        <div class="stat-value" id="statLon">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Period</div>
+        <div class="stat-value" id="statPeriod">—</div>
+      </div>
+      <div class="speed-ctrl">
+        <div class="speed-label">SIM SPEED</div>
+        <div class="speed-opts" id="speedOpts">
+          <button class="speed-opt" data-speed="1">1×</button>
+          <button class="speed-opt active" data-speed="120">120×</button>
+          <button class="speed-opt" data-speed="1800">1800×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MISSION DRAWER ===================== -->
+  <div id="drawer">
+    <button class="drawer-close" id="drawerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div class="drawer-tag">MISSION DATA</div>
+    <div class="drawer-title">Starcloud-1</div>
+    <div class="drawer-lede" id="drawerLede"></div>
+
+    <div class="section">
+      <div class="section-h">Spacecraft</div>
+      <dl class="kv" id="kvSpacecraft"></dl>
+    </div>
+
+    <div class="section">
+      <div class="section-h">Orbit (current elements)</div>
+      <dl class="kv" id="kvOrbit"></dl>
+    </div>
+
+    <div class="section">
+      <div class="section-h">Milestones</div>
+      <div id="milestones"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-h">Starcloud, Inc.</div>
+      <p class="prose" id="companyProse"></p>
+    </div>
+
+    <div class="section">
+      <div class="section-h">What's next</div>
+      <p class="prose" id="nextProse"></p>
+    </div>
+
+    <div class="src-note" id="srcNote"></div>
+  </div>
+
+</div>
+
+<!-- ===================== LIBRARIES ===================== -->
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/controls/OrbitControls.js"></script>
+
+<!-- ===================== APP ===================== -->
+<script src="js/data.js"></script>
+<script src="js/orbit.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
